@@ -77,6 +77,9 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
 
 :root {
   --app-scrollbar-width: 6px;
+  --app-scrollbar-fade-duration: 150ms;
+  --app-scrollbar-thumb: rgb(0 0 0 / 15%);
+  --app-scrollbar-thumb-hover: rgb(0 0 0 / 25%);
   --glass-blur: 12px;
   --glass-opacity: 80%;
   --glass-saturation: 1.14;
@@ -91,6 +94,8 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
 }
 
 .dark {
+  --app-scrollbar-thumb: rgb(255 255 255 / 8%);
+  --app-scrollbar-thumb-hover: rgb(255 255 255 / 12%);
   --glass-blur: 16px;
   --glass-saturation: 1.08;
 }
@@ -1026,6 +1031,10 @@ code {
 }
 
 /* Scrollbar styling */
+.app-scrollbar-fade {
+  transition: opacity var(--app-scrollbar-fade-duration) linear;
+}
+
 ::-webkit-scrollbar {
   width: var(--app-scrollbar-width);
 }
@@ -1035,20 +1044,21 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--app-scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--app-scrollbar-thumb-hover);
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+.scrollbar-overlay-native {
+  scrollbar-color: transparent transparent;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
+.scrollbar-overlay-native::-webkit-scrollbar-thumb,
+.scrollbar-overlay-native::-webkit-scrollbar-thumb:hover {
+  background: transparent;
 }
 
 .turn-chip-strip {
@@ -1567,28 +1577,6 @@ label:has(> select#reasoning-effort) select {
   background-clip: text;
   -webkit-background-clip: text;
   animation: ultrathink-rainbow 10s linear infinite;
-}
-
-/* Thin scrollbar for model picker */
-.model-picker-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.model-picker-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-}
-
-.model-picker-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.dark .model-picker-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.dark .model-picker-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Composer chips are non-editable decorators, so the browser skips them when

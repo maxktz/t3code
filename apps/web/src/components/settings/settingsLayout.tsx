@@ -3,6 +3,7 @@ import { type ComponentPropsWithoutRef, type ReactNode, useEffect, useState } fr
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
 /** Re-render every `intervalMs`; return a stable timestamp snapshot for render-time relative labels. */
@@ -120,10 +121,14 @@ export function SettingsPageContainer({
   className?: string;
 }) {
   return (
-    <div className="settings-page-scroll-fade scrollbar-gutter-both flex-1 overflow-y-auto px-4 pt-10 pb-7 sm:px-8 sm:pt-12 sm:pb-10">
+    <ScrollArea
+      className="h-auto min-h-0 flex-1"
+      scrollbarVisibility="scroll"
+      viewportClassName="settings-page-scroll-fade scrollbar-gutter-both px-4 pt-10 pb-7 sm:px-8 sm:pt-12 sm:pb-10"
+    >
       <div className={cn("mx-auto flex w-full max-w-4xl flex-col gap-12", className)}>
         {children}
       </div>
-    </div>
+    </ScrollArea>
   );
 }

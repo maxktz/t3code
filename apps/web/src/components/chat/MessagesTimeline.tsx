@@ -59,6 +59,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { AutoHideScrollbar } from "../ui/scroll-area";
 import { buildExpandedImagePreview, ExpandedImagePreview } from "./ExpandedImagePreview";
 import { ProposedPlanCard } from "./ProposedPlanCard";
 import { ChangedFilesCard } from "./ChangedFilesTree";
@@ -150,6 +151,8 @@ const TIMELINE_LIST_HEADER = <div className="h-3 sm:h-4" />;
 const TIMELINE_LIST_FADE_HEADER = <div className="h-10 sm:h-12" />;
 const TIMELINE_LIST_FOOTER = <div className="h-3 sm:h-4" />;
 const EMPTY_TIMELINE_SKILLS: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">> = [];
+
+type TimelineScrollView = HTMLElement | { getScrollableNode(): HTMLElement };
 
 // ---------------------------------------------------------------------------
 // Props (public API)
@@ -328,6 +331,15 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   const [timelineViewportElement, setTimelineViewportElement] = useState<HTMLDivElement | null>(
     null,
   );
+  // LegendList must own the scroll viewport for virtualization and anchoring. Base UI's
+  // ScrollArea cannot attach its scrollbar to that external viewport, so the overlay
+  // scrollbar only mirrors LegendList's native scrolling element.
+  const [timelineScrollElement, setTimelineScrollElement] = useState<HTMLElement | null>(null);
+  const setTimelineScrollView = useCallback((scrollView: TimelineScrollView | null) => {
+    setTimelineScrollElement(
+      scrollView instanceof HTMLElement ? scrollView : (scrollView?.getScrollableNode() ?? null),
+    );
+  }, []);
   const [minimapHasPersistentGutter, setMinimapHasPersistentGutter] = useState(false);
   const [minimapHitStripWidth, setMinimapHitStripWidth] = useState(0);
   const handleAnchorReady = useCallback(
@@ -486,6 +498,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
         <div ref={setTimelineViewportElement} className="relative h-full min-h-0">
           <LegendList<MessagesTimelineRow>
             ref={listRef}
+            refScrollView={setTimelineScrollView}
             data={rows}
             keyExtractor={keyExtractor}
             getItemType={getItemType}
@@ -512,12 +525,13 @@ export const MessagesTimeline = memo(function MessagesTimeline({
             }}
             onScroll={handleScroll}
             className={cn(
-              "scrollbar-gutter-both h-full min-h-0 overflow-x-hidden overscroll-y-contain px-3 [overflow-anchor:none] sm:px-5",
+              "scrollbar-gutter-both scrollbar-overlay-native h-full min-h-0 overflow-x-hidden overscroll-y-contain px-3 [overflow-anchor:none] sm:px-5",
               topFadeEnabled && "chat-timeline-scroll-fade",
             )}
             ListHeaderComponent={topFadeEnabled ? TIMELINE_LIST_FADE_HEADER : TIMELINE_LIST_HEADER}
             ListFooterComponent={TIMELINE_LIST_FOOTER}
           />
+          <AutoHideScrollbar scrollElement={timelineScrollElement} />
           <TimelineMinimap
             items={minimapItems}
             bottomInset={contentInsetEndAdjustment}

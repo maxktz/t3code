@@ -59,8 +59,11 @@ import {
   ComboboxStatus,
   ComboboxTrigger,
 } from "./ui/combobox";
+import { AutoHideScrollbar } from "./ui/scroll-area";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
+
+type BranchListScrollView = HTMLElement | { getScrollableNode(): HTMLElement };
 
 interface BranchToolbarBranchSelectorProps {
   className?: string;
@@ -509,6 +512,13 @@ export function BranchToolbarBranchSelector({
   );
 
   const branchListScrollElementRef = useRef<HTMLElement | null>(null);
+  const [branchListScrollElement, setBranchListScrollElement] = useState<HTMLElement | null>(null);
+  const setBranchListScrollView = useCallback((scrollView: BranchListScrollView | null) => {
+    const scrollElement =
+      scrollView instanceof HTMLElement ? scrollView : (scrollView?.getScrollableNode() ?? null);
+    branchListScrollElementRef.current = scrollElement;
+    setBranchListScrollElement(scrollElement);
+  }, []);
   const [showTopBranchScrollFade, setShowTopBranchScrollFade] = useState(false);
   const [showBottomBranchScrollFade, setShowBottomBranchScrollFade] = useState(false);
   const fetchNextBranchPage = useCallback(() => {
@@ -765,9 +775,10 @@ export function BranchToolbarBranchSelector({
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <ComboboxEmpty>No refs found.</ComboboxEmpty>
           <div className="relative min-h-0 w-full max-h-56 flex-1 overflow-hidden">
-            <ComboboxListVirtualized className="size-full min-w-0 p-0">
+            <ComboboxListVirtualized className="size-full min-w-0 p-0 not-empty:p-0">
               <LegendList<string>
                 ref={branchListRef}
+                refScrollView={setBranchListScrollView}
                 data={filteredBranchPickerItems}
                 keyExtractor={(item) => item}
                 getItemType={(item) =>
@@ -780,6 +791,7 @@ export function BranchToolbarBranchSelector({
                 renderItem={({ item, index }) => renderPickerItem(item, index)}
                 estimatedItemSize={28}
                 drawDistance={336}
+                contentContainerClassName="px-2"
                 onEndReached={() => {
                   if (hasNextPage && !isFetchingNextPage) {
                     fetchNextBranchPage();
@@ -794,13 +806,14 @@ export function BranchToolbarBranchSelector({
                   maybeFetchNextBranchPage();
                 }}
                 className={cn(
-                  "scrollbar-gutter-stable overflow-x-hidden overscroll-y-contain ps-1 pe-0 pt-2 pb-1 [--fade-size:1.5rem]",
+                  "scrollbar-overlay-native overflow-x-hidden overscroll-y-contain pt-2 pb-1 [--fade-size:1.5rem]",
                   showTopBranchScrollFade && "mask-t-from-[calc(100%-var(--fade-size))]",
                   showBottomBranchScrollFade && "mask-b-from-[calc(100%-var(--fade-size))]",
                 )}
                 style={{ maxHeight: "14rem" }}
               />
             </ComboboxListVirtualized>
+            <AutoHideScrollbar scrollElement={branchListScrollElement} />
           </div>
           {isSelectingWorktreeBase ? (
             <Tooltip>

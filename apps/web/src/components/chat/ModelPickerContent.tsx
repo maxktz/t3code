@@ -12,6 +12,7 @@ import { ModelPickerSidebar } from "./ModelPickerSidebar";
 import { isModelPickerNewModel } from "./modelPickerModelHighlights";
 import { buildModelPickerSearchText, scoreModelPickerSearch } from "./modelPickerSearch";
 import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxListVirtualized } from "../ui/combobox";
+import { AutoHideScrollbar } from "../ui/scroll-area";
 import { ModelEsque } from "./providerIconUtils";
 import {
   modelPickerJumpCommandForIndex,
@@ -28,6 +29,8 @@ import {
   type ProviderInstanceEntry,
 } from "../../providerInstances";
 import { providerModelKey, sortProviderModelItems } from "../../modelOrdering";
+
+type ModelListScrollView = HTMLElement | { getScrollableNode(): HTMLElement };
 
 type ModelPickerItem = {
   slug: string;
@@ -101,6 +104,12 @@ export const ModelPickerContent = memo(function ModelPickerContent(props: {
   const [showBottomScrollFade, setShowBottomScrollFade] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modelListRef = useRef<LegendListRef | null>(null);
+  const [modelListScrollElement, setModelListScrollElement] = useState<HTMLElement | null>(null);
+  const setModelListScrollView = useCallback((scrollView: ModelListScrollView | null) => {
+    setModelListScrollElement(
+      scrollView instanceof HTMLElement ? scrollView : (scrollView?.getScrollableNode() ?? null),
+    );
+  }, []);
   const highlightedModelKeyRef = useRef<string | null>(null);
   const favorites = useClientSettings((s) => s.favorites ?? []);
   const [selectedInstanceId, setSelectedInstanceId] = useState<ProviderInstanceId | "favorites">(
@@ -619,9 +628,10 @@ export const ModelPickerContent = memo(function ModelPickerContent(props: {
 
             {/* Model list */}
             <div className="relative min-h-0 flex-1 overflow-hidden">
-              <ComboboxListVirtualized className="model-picker-list size-full min-w-0 p-0">
+              <ComboboxListVirtualized className="size-full min-w-0 p-0 not-empty:p-0">
                 <LegendList<string>
                   ref={modelListRef}
+                  refScrollView={setModelListScrollView}
                   data={filteredModelKeys}
                   extraData={favoritesSet}
                   keyExtractor={(modelKey) => modelKey}
@@ -656,15 +666,17 @@ export const ModelPickerContent = memo(function ModelPickerContent(props: {
                   estimatedItemSize={60}
                   drawDistance={480}
                   recycleItems
+                  contentContainerClassName="px-2"
                   onLayout={updateModelListScrollFades}
                   onScroll={updateModelListScrollFades}
                   className={cn(
-                    "scrollbar-gutter-both h-full overflow-x-hidden overscroll-y-contain py-1.5 [--fade-size:1.5rem]",
+                    "scrollbar-overlay-native h-full overflow-x-hidden overscroll-y-contain py-1.5 [--fade-size:1.5rem]",
                     showTopScrollFade && "mask-t-from-[calc(100%-var(--fade-size))]",
                     showBottomScrollFade && "mask-b-from-[calc(100%-var(--fade-size))]",
                   )}
                 />
               </ComboboxListVirtualized>
+              <AutoHideScrollbar scrollElement={modelListScrollElement} />
             </div>
             <ComboboxEmpty className="not-empty:py-6 empty:h-0 text-xs font-normal leading-snug">
               No models found
