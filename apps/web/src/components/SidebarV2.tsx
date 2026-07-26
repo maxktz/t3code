@@ -2357,7 +2357,7 @@ export default function SidebarV2() {
             </div>
           </SidebarGroup>
         ) : null}
-        <SidebarGroup className="min-h-0 flex-1 overflow-y-auto px-2 py-1 [scrollbar-gutter:stable]">
+        <SidebarGroup className="min-h-0 flex-1 overflow-y-auto px-2 py-1">
           <TooltipProvider
             key="sidebar-thread-tooltips-150"
             delay={150}
