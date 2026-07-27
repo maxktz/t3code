@@ -696,7 +696,13 @@ function SidebarContent({
   return (
     <>
       {fixedHeader ? <div className="w-full shrink-0">{fixedHeader}</div> : null}
-      <ScrollArea hideScrollbars={!showScrollbar} scrollFade className="h-auto min-h-0 flex-1">
+      <ScrollArea
+        hideScrollbars={!showScrollbar}
+        measureVerticalScrollbar={showScrollbar}
+        scrollFade
+        className="h-auto min-h-0 flex-1"
+        viewportClassName="overflow-x-hidden!"
+      >
         <div
           className={cn(
             "flex w-full min-w-0 flex-col gap-2 group-data-[collapsible=icon]:overflow-hidden",

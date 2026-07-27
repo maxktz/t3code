@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { cn } from "~/lib/utils";
 
@@ -11,6 +11,48 @@ const SCROLL_KEYS = new Set(["ArrowDown", "ArrowUp", "End", "Home", "PageDown", 
 
 type ScrollbarVisibility = "hover" | "scroll";
 
+function useMeasuredVerticalOverflow(
+  viewportRef: RefObject<HTMLDivElement | null>,
+  contentRef: RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+) {
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const content = contentRef.current;
+    if (!enabled || !viewport || !content) return;
+
+    let disposed = false;
+    const measure = () => setHasOverflow(viewport.scrollHeight > viewport.clientHeight);
+    const update = () => {
+      measure();
+      const animations = content.getAnimations({ subtree: true }).filter((animation) => {
+        const iterations = animation.effect?.getTiming().iterations;
+        return animation.playState !== "finished" && iterations !== Infinity;
+      });
+      if (animations.length === 0) return;
+
+      void Promise.allSettled(animations.map((animation) => animation.finished)).then(() => {
+        requestAnimationFrame(() => {
+          if (!disposed) measure();
+        });
+      });
+    };
+
+    update();
+    const resizeObserver = new ResizeObserver(update);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(content);
+    return () => {
+      disposed = true;
+      resizeObserver.disconnect();
+    };
+  }, [contentRef, enabled, viewportRef]);
+
+  return hasOverflow;
+}
+
 function ScrollArea({
   className,
   children,
@@ -18,6 +60,7 @@ function ScrollArea({
   scrollbarGutter = false,
   scrollbarVisibility = "hover",
   hideScrollbars = false,
+  measureVerticalScrollbar = false,
   chainVerticalScroll = false,
   viewportClassName,
   ...props
@@ -26,15 +69,25 @@ function ScrollArea({
   scrollbarGutter?: boolean;
   scrollbarVisibility?: ScrollbarVisibility;
   hideScrollbars?: boolean;
+  measureVerticalScrollbar?: boolean;
   chainVerticalScroll?: boolean;
   viewportClassName?: string;
 }) {
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const hasVerticalOverflow = useMeasuredVerticalOverflow(
+    viewportRef,
+    contentRef,
+    measureVerticalScrollbar,
+  );
+
   return (
     <ScrollAreaPrimitive.Root
       className={cn("relative size-full min-h-0 overflow-hidden rounded-[inherit]", className)}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
+        ref={viewportRef}
         className={cn(
           "h-full max-h-[inherit] overflow-auto overscroll-contain rounded-[inherit] outline-none transition-shadows focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-has-overflow-x:overscroll-x-contain",
           chainVerticalScroll && "overscroll-y-auto",
@@ -47,11 +100,27 @@ function ScrollArea({
         )}
         data-slot="scroll-area-viewport"
       >
-        {children}
+        {measureVerticalScrollbar ? (
+          <ScrollAreaPrimitive.Content
+            ref={contentRef}
+            className="w-full min-w-0!"
+            data-slot="scroll-area-content"
+          >
+            {children}
+          </ScrollAreaPrimitive.Content>
+        ) : (
+          children
+        )}
       </ScrollAreaPrimitive.Viewport>
       {!hideScrollbars && (
         <>
-          <ScrollBar orientation="vertical" visibility={scrollbarVisibility} />
+          <ScrollBar
+            orientation="vertical"
+            visibility={scrollbarVisibility}
+            keepMounted={measureVerticalScrollbar}
+            data-scrollable={measureVerticalScrollbar ? hasVerticalOverflow : undefined}
+            className={measureVerticalScrollbar && !hasVerticalOverflow ? "hidden" : undefined}
+          />
           <ScrollBar orientation="horizontal" visibility={scrollbarVisibility} />
           <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />
         </>
