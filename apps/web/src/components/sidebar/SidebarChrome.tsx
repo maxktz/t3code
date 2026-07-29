@@ -119,7 +119,8 @@ export const SidebarChromeFooter = memo(function SidebarChromeFooter() {
   }, [isMobile, navigate, setOpenMobile]);
 
   return (
-    <SidebarFooter className="p-2">
+    // Temporarily hidden while prototyping the V2 sidebar density.
+    <SidebarFooter className="hidden p-2">
       <SidebarProviderUpdatePill />
       <SidebarUpdatePill />
       <SidebarMenu>

@@ -35,7 +35,8 @@ import {
 } from "./ui/sidebar";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 
-const MACOS_TRAFFIC_LIGHTS_LEFT_INSET = "90px";
+// ~10px left of the previous 90px inset after traffic lights moved inward.
+const MACOS_TRAFFIC_LIGHTS_LEFT_INSET = "5rem";
 
 function subscribeToViewportWidth(onChange: () => void): () => void {
   window.addEventListener("resize", onChange);

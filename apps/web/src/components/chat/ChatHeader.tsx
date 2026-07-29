@@ -34,6 +34,8 @@ interface ChatHeaderProps {
   availableEditors: ReadonlyArray<EditorId>;
   rightPanelOpen: boolean;
   gitCwd: string | null;
+  /** Temporary prototype: hide breadcrumbs + action buttons on the empty new-thread screen. */
+  hideChrome?: boolean;
   onNewThreadInProject: () => void;
   onRunProjectScript: (script: ProjectScript) => void;
   onAddProjectScript: (input: NewProjectScriptInput) => Promise<ProjectScriptActionResult>;
@@ -70,6 +72,7 @@ export const ChatHeader = memo(function ChatHeader({
   availableEditors,
   rightPanelOpen,
   gitCwd,
+  hideChrome = false,
   onNewThreadInProject,
   onRunProjectScript,
   onAddProjectScript,
@@ -86,6 +89,12 @@ export const ChatHeader = memo(function ChatHeader({
     activeThreadEnvironmentId,
     primaryEnvironmentId,
   });
+
+  if (hideChrome) {
+    // Keep the header slot for drag-region / layout, but hide content while prototyping.
+    return <div className="min-w-0 flex-1" aria-hidden />;
+  }
+
   return (
     <div className="@container/header-actions flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden sm:gap-3">

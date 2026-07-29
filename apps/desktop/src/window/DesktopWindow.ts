@@ -19,7 +19,7 @@ import { MENU_ACTION_CHANNEL, WINDOW_FULLSCREEN_STATE_CHANNEL } from "../ipc/cha
 import * as PreviewManager from "../preview/Manager.ts";
 import * as DesktopAppSettings from "../settings/DesktopAppSettings.ts";
 
-const TITLEBAR_HEIGHT = 40;
+const TITLEBAR_HEIGHT = 36;
 const TITLEBAR_COLOR = "#01000000"; // #00000000 does not work correctly on Linux
 const TITLEBAR_LIGHT_SYMBOL_COLOR = "#1f2937";
 const TITLEBAR_DARK_SYMBOL_COLOR = "#f8fafc";
@@ -188,7 +188,8 @@ function getWindowTitleBarOptions(
   if (platform === "darwin") {
     return {
       titleBarStyle: "hiddenInset",
-      trafficLightPosition: { x: 16, y: 18 },
+      // Keep the native controls inset ~10px from the top of the 36px chrome.
+      trafficLightPosition: { x: 10, y: 10 },
     };
   }
 

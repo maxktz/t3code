@@ -1,6 +1,6 @@
 import type { ScopedProjectRef } from "@t3tools/contracts";
 import { scopedProjectKey, scopeProjectRef } from "@t3tools/client-runtime/environment";
-import { FolderPlusIcon } from "lucide-react";
+import { ChevronDownIcon, FolderPlusIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
 
 import { openCommandPalette } from "~/commandPaletteBus";
@@ -13,6 +13,7 @@ import {
 } from "~/sidebarProjectGrouping";
 import { useProjects, useThreadShells } from "~/state/entities";
 import { useEnvironments, usePrimaryEnvironmentId } from "~/state/environments";
+import { cn } from "~/lib/utils";
 import { sortLogicalProjectsForSidebar } from "../Sidebar.logic";
 import {
   Menu,
@@ -27,11 +28,20 @@ import {
 interface DraftHeroHeadlineProps {
   readonly activeProjectRef: ScopedProjectRef | null;
   readonly activeProjectTitle: string | null;
+  readonly activeProjectCwd: string | null;
+}
+
+function projectDirectoryLabel(cwd: string | null, fallbackTitle: string | null): string {
+  if (cwd && cwd.trim().length > 0) {
+    return cwd;
+  }
+  return fallbackTitle ?? "Choose a project";
 }
 
 export function DraftHeroHeadline({
   activeProjectRef,
   activeProjectTitle,
+  activeProjectCwd,
 }: DraftHeroHeadlineProps) {
   const projects = useProjects();
   const threads = useThreadShells();
@@ -96,16 +106,32 @@ export function DraftHeroHeadline({
   const hasResolvedProject = activeProjectTitle !== null;
   const canChooseProject = projectPickerEntries.length > 0;
   const shouldShowProjectMenu = canChooseProject;
+  const directoryLabel = projectDirectoryLabel(
+    activeProjectCwd,
+    activeProjectDisplayName ?? activeProjectTitle,
+  );
+
+  const triggerClassName = cn(
+    "pointer-events-auto inline-flex min-w-0 max-w-full cursor-pointer items-center gap-1 rounded-sm text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
+    !hasResolvedProject && "text-muted-foreground/70 hover:text-muted-foreground",
+  );
+
+  const triggerContent = (
+    <>
+      <span className="min-w-0 truncate">{directoryLabel}</span>
+      <ChevronDownIcon aria-hidden className="size-3 shrink-0 opacity-70" />
+    </>
+  );
 
   const projectSelector = shouldShowProjectMenu ? (
     <Menu>
       <MenuTrigger
         aria-label={hasResolvedProject ? "Change project" : "Choose a project"}
-        className="pointer-events-auto inline cursor-pointer border-foreground/60 border-b border-dotted text-foreground transition-colors hover:border-foreground/80 focus-visible:rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+        className={triggerClassName}
       >
-        {activeProjectDisplayName ?? "Choose a project"}
+        {triggerContent}
       </MenuTrigger>
-      <MenuPopup align="center" className="max-h-80 min-w-40! w-max max-w-64 overflow-y-auto">
+      <MenuPopup align="start" className="max-h-80 min-w-40! w-max max-w-72 overflow-y-auto">
         <MenuRadioGroup
           value={activeProjectKey}
           onValueChange={(value) => {
@@ -135,24 +161,11 @@ export function DraftHeroHeadline({
       </MenuPopup>
     </Menu>
   ) : (
-    <button
-      type="button"
-      onClick={openAddProject}
-      className="pointer-events-auto inline cursor-pointer border-muted-foreground/35 border-b border-dotted text-muted-foreground/60 transition-colors hover:border-muted-foreground/60 hover:text-muted-foreground/80 focus-visible:rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {activeProjectTitle ?? "Add a project"}
+    <button type="button" onClick={openAddProject} className={triggerClassName}>
+      {triggerContent}
     </button>
   );
 
-  return (
-    <h1 className="mx-auto w-full max-w-5xl text-center font-normal text-2xl text-foreground tracking-tight sm:text-3xl">
-      {hasResolvedProject ? (
-        <>What should we build in {projectSelector}?</>
-      ) : canChooseProject ? (
-        <>{projectSelector} to start</>
-      ) : (
-        <>Add a project to start</>
-      )}
-    </h1>
-  );
+  // Compact project-selector row above the new-thread composer.
+  return <div className="flex w-full min-w-0 items-center justify-start">{projectSelector}</div>;
 }

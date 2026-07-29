@@ -969,7 +969,8 @@ const SidebarV2Row = memo(function SidebarV2Row(props: {
                   </span>
                 ) : null}
                 {driverKind ? (
-                  <span className="inline-flex shrink-0 items-center opacity-60">
+                  // Temporarily hidden while prototyping the V2 chat-item look.
+                  <span className="hidden shrink-0 items-center opacity-60">
                     <ProviderInstanceIcon
                       driverKind={driverKind}
                       displayName={thread.session?.providerName ?? modelInstanceId}
@@ -2233,7 +2234,7 @@ export default function SidebarV2() {
                     <SidebarMenuButton
                       type="button"
                       aria-label="Search threads and commands"
-                      className="focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
+                      className="group/search focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
                       data-testid="command-palette-trigger"
                     />
                   }
@@ -2241,7 +2242,7 @@ export default function SidebarV2() {
                   <SearchIcon />
                   <div className="flex-1 truncate text-left">Search</div>
                   {commandPaletteShortcutLabel ? (
-                    <Kbd className="mr-px h-4 min-w-0 rounded-sm bg-sidebar-control-surface px-1.5 text-[10px] text-sidebar-muted-foreground ring-1 ring-sidebar-border">
+                    <Kbd className="mr-px h-4 min-w-0 rounded-sm bg-sidebar-control-surface px-1.5 text-[10px] text-sidebar-muted-foreground opacity-0 ring-1 ring-sidebar-border transition-opacity group-hover/search:opacity-100 group-focus-visible/search:opacity-100">
                       {commandPaletteShortcutLabel}
                     </Kbd>
                   ) : null}
@@ -2290,15 +2291,15 @@ export default function SidebarV2() {
                       <ProjectFavicon
                         environmentId={scopedProjectGroup.environmentId}
                         cwd={scopedProjectGroup.workspaceRoot}
-                        className="size-4 shrink-0"
+                        className="size-3.5 shrink-0"
                       />
                     ) : (
-                      <FolderIcon className="size-4 shrink-0" />
+                      <FolderIcon className="size-3.5 shrink-0" />
                     )}
                     <span className="min-w-0 flex-1 truncate">
                       {scopedProjectGroup?.displayName ?? "All projects"}
                     </span>
-                    <ChevronDownIcon className="-mr-px size-4 shrink-0" />
+                    <ChevronDownIcon className="-mr-px size-3.5 shrink-0" />
                   </MenuTrigger>
                   <MenuPopup align="start" className="w-(--anchor-width)">
                     <MenuRadioGroup

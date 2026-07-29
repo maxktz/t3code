@@ -1,7 +1,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
-import { PanelLeftCloseIcon, PanelLeftIcon } from "lucide-react";
+import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
@@ -216,7 +216,7 @@ function Sidebar({
       <SidebarInstanceContext value={instanceContextValue}>
         <div
           className={cn(
-            "flex h-full w-(--sidebar-width) flex-col bg-sidebar surface-grain text-sidebar-foreground",
+            "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
             className,
           )}
           data-slot="sidebar"
@@ -234,7 +234,7 @@ function Sidebar({
         <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
           <SheetPopup
             className={cn(
-              "w-(--sidebar-width) max-w-none bg-sidebar surface-grain p-0 text-sidebar-foreground",
+              "w-(--sidebar-width) max-w-none bg-sidebar p-0 text-sidebar-foreground",
               className,
             )}
             data-mobile="true"
@@ -304,7 +304,7 @@ function Sidebar({
           {...props}
         >
           <div
-            className="flex h-full w-full flex-col bg-sidebar surface-grain group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm/5"
+            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm/5"
             data-sidebar="sidebar"
             data-slot="sidebar-inner"
           >
@@ -337,7 +337,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       variant="ghost"
       {...props}
     >
-      {isOpen ? <PanelLeftCloseIcon /> : <PanelLeftIcon />}
+      <PanelLeftIcon />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -792,7 +792,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full cursor-pointer items-center gap-2 overflow-hidden text-left outline-hidden ring-ring transition-[width,height,padding] hover:bg-sidebar-row-hover hover:text-sidebar-foreground focus-visible:ring-2 active:bg-sidebar-row-active active:text-sidebar-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pe-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-row-selected data-[active=true]:font-medium data-[active=true]:text-sidebar-foreground data-[state=open]:hover:bg-sidebar-row-hover data-[state=open]:hover:text-sidebar-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg:not([class*='size-'])]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-muted-foreground [&>svg]:opacity-60 hover:[&>svg]:text-sidebar-foreground hover:[&>svg]:opacity-100 active:[&>svg]:text-sidebar-foreground active:[&>svg]:opacity-100 data-[active=true]:[&>svg]:text-sidebar-foreground data-[active=true]:[&>svg]:opacity-100",
+  "peer/menu-button flex w-full cursor-pointer items-center gap-2 overflow-hidden text-left outline-hidden ring-ring transition-[width,height,padding] hover:bg-sidebar-row-hover focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pe-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-row-selected data-[active=true]:font-medium data-[active=true]:text-sidebar-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg:not([class*='size-'])]:size-3.5 [&>svg]:shrink-0 [&>svg]:text-foreground [&>svg]:opacity-[.64] data-[active=true]:[&>svg]:text-sidebar-foreground data-[active=true]:[&>svg]:opacity-100",
   {
     defaultVariants: {
       size: "default",
@@ -800,13 +800,13 @@ const sidebarMenuButtonVariants = cva(
     },
     variants: {
       size: {
-        default: "h-8 rounded-md px-2.5 py-1.5 text-sm",
-        icon: "size-8 justify-center rounded-md p-0",
+        default: "h-7.5 rounded-md px-2 py-1.5 text-[13px]",
+        icon: "size-7.5 justify-center rounded-md p-0",
         lg: "h-12 rounded-lg p-2 text-sm group-data-[collapsible=icon]:p-0!",
         sm: "h-7 rounded-lg p-2 text-xs",
       },
       variant: {
-        default: "font-medium text-sidebar-muted-foreground/80",
+        default: "font-normal text-secondary-foreground",
         outline: "bg-sidebar-control-surface ring-1 ring-sidebar-border",
       },
     },

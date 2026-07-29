@@ -521,6 +521,8 @@ export interface ChatComposerProps {
   activeThread: Thread | undefined;
   isServerThread: boolean;
   isLocalDraftThread: boolean;
+  /** Temporary prototype: slightly shorter editor on the empty new-thread screen. */
+  isDraftHeroState?: boolean;
   forceExpandedOnMobile: boolean;
   projectSelectionRequired: boolean;
 
@@ -634,6 +636,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
     activeThread,
     isServerThread: _isServerThread,
     isLocalDraftThread: _isLocalDraftThread,
+    isDraftHeroState = false,
     forceExpandedOnMobile,
     projectSelectionRequired,
     phase,
@@ -2615,7 +2618,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
     <form
       ref={composerFormRef}
       onSubmit={submitComposer}
-      className="mx-auto w-full min-w-0 max-w-3xl"
+      className={cn("mx-auto w-full min-w-0", isDraftHeroState ? "max-w-none" : "max-w-3xl")}
       data-chat-composer-form="true"
     >
       <div
@@ -2816,7 +2819,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
             ref={setComposerMenuAnchor}
             className={cn(
               "relative px-3 pb-2 sm:px-4",
-              hasComposerHeader ? "pt-2.5 sm:pt-3" : "pt-3.5 sm:pt-4",
+              isDraftHeroState ? "pt-2.5" : hasComposerHeader ? "pt-2.5 sm:pt-3" : "pt-3.5 sm:pt-4",
               isComposerCollapsedMobile && "hidden",
             )}
           >
@@ -2999,7 +3002,15 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                     : []
                 }
                 skills={selectedProviderStatus?.skills ?? []}
-                {...(showMobilePendingAnswerActions ? { className: "max-sm:pb-11" } : {})}
+                {...(showMobilePendingAnswerActions || isDraftHeroState
+                  ? {
+                      className: cn(
+                        showMobilePendingAnswerActions && "max-sm:pb-11",
+                        // ~40px editor floor so the whole hero shell lands near 100px.
+                        isDraftHeroState && "min-h-10",
+                      ),
+                    }
+                  : {})}
                 onRemoveTerminalContext={removeComposerTerminalContextFromDraft}
                 onChange={onPromptChange}
                 onCommandKeyDown={onComposerCommandKey}
@@ -3065,7 +3076,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
               data-chat-composer-footer="true"
               data-chat-composer-footer-compact={isComposerFooterCompact ? "true" : "false"}
               className={cn(
-                "flex min-w-0 flex-nowrap items-center justify-between gap-2 overflow-visible px-2.5 pb-2.5 sm:px-3 sm:pb-3",
+                "flex min-w-0 flex-nowrap items-center justify-between gap-2 overflow-visible",
+                isDraftHeroState ? "px-2.5 pb-2 sm:px-3" : "px-2.5 pb-2.5 sm:px-3 sm:pb-3",
                 pendingUserInputs.length > 0 && "pt-2",
                 isComposerFooterCompact ? "gap-1.5" : "gap-2 sm:gap-0",
                 showMobilePendingAnswerActions && "hidden sm:flex",

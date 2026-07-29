@@ -5679,6 +5679,7 @@ function ChatViewContent(props: ChatViewProps) {
             availableEditors={availableEditors}
             rightPanelOpen={rightPanelOpen}
             gitCwd={gitCwd}
+            hideChrome={isDraftHeroState}
             onNewThreadInProject={handleNewThreadInActiveProject}
             onRunProjectScript={runProjectScript}
             onAddProjectScript={saveProjectScript}
@@ -5776,10 +5777,20 @@ function ChatViewContent(props: ChatViewProps) {
                 className="chat-composer-horizontal-inset w-full"
               >
                 <div className="pointer-events-auto relative z-10">
-                  {isDraftHeroState ? (
-                    <div className="absolute inset-x-0 bottom-full z-0">
+                  {isDraftHeroState ? null : (
+                    <ComposerBannerStack className="relative z-0" items={composerBannerItems} />
+                  )}
+                  <div
+                    className={cn("relative", isDraftHeroState && "mx-auto w-full max-w-150")}
+                    style={
+                      forceExpandedMobileComposer
+                        ? { viewTransitionName: MOBILE_COMPOSER_VIEW_TRANSITION_NAME }
+                        : undefined
+                    }
+                  >
+                    {isDraftHeroState ? (
                       <div
-                        className="pb-8"
+                        className="px-2 pb-2"
                         style={
                           forceExpandedMobileComposer
                             ? {
@@ -5791,24 +5802,17 @@ function ChatViewContent(props: ChatViewProps) {
                         <DraftHeroHeadline
                           activeProjectRef={activeProjectRef}
                           activeProjectTitle={activeProject?.title ?? null}
+                          activeProjectCwd={activeProject?.workspaceRoot ?? null}
                         />
                       </div>
+                    ) : null}
+                    {isDraftHeroState ? (
                       <ComposerBannerStack className="relative z-0" items={composerBannerItems} />
-                    </div>
-                  ) : (
-                    <ComposerBannerStack className="relative z-0" items={composerBannerItems} />
-                  )}
-                  <div
-                    className="relative"
-                    style={
-                      forceExpandedMobileComposer
-                        ? { viewTransitionName: MOBILE_COMPOSER_VIEW_TRANSITION_NAME }
-                        : undefined
-                    }
-                  >
+                    ) : null}
                     <div
                       className={cn(
-                        "chat-composer-glass-shell relative mx-auto w-full max-w-3xl",
+                        "chat-composer-glass-shell relative mx-auto w-full",
+                        isDraftHeroState ? "max-w-none" : "max-w-3xl",
                         showComposerContextStrip && "chat-composer-glass-shell-with-context",
                       )}
                     >
@@ -5826,6 +5830,7 @@ function ChatViewContent(props: ChatViewProps) {
                             activeThread={activeThread}
                             isServerThread={isServerThread}
                             isLocalDraftThread={isLocalDraftThread}
+                            isDraftHeroState={isDraftHeroState}
                             forceExpandedOnMobile={forceExpandedMobileComposer && isDraftHeroState}
                             projectSelectionRequired={isLocalDraftThread && activeProject === null}
                             phase={phase}
