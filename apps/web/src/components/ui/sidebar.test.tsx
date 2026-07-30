@@ -1,9 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 
+import { Button } from "./button";
 import {
   SidebarMenuAction,
-  SidebarMenuButton,
   SidebarMenuSubButton,
   SidebarProvider,
   SidebarTrigger,
@@ -13,7 +13,9 @@ import { resolveSidebarState } from "./sidebarState";
 function renderSidebarButton(className?: string) {
   return renderToStaticMarkup(
     <SidebarProvider>
-      <SidebarMenuButton className={className}>Projects</SidebarMenuButton>
+      <Button variant="sidebar" className={className}>
+        Projects
+      </Button>
     </SidebarProvider>,
   );
 }
@@ -47,18 +49,19 @@ describe("sidebar interactive cursors", () => {
     );
 
     expect(html).toContain("[-webkit-app-region:no-drag]");
-    expect(html).toContain("size-[var(--workspace-titlebar-control-size)]!");
+    expect(html).toContain("size-7");
   });
 
   it("uses shared geometry and icon constraints for menu buttons by default", () => {
     const html = renderSidebarButton();
 
-    expect(html).toContain('data-slot="sidebar-menu-button"');
-    expect(html).toContain("h-8");
+    expect(html).toContain('data-slot="button"');
+    expect(html).toContain('data-sidebar="menu-button"');
+    expect(html).toContain("h-7.5");
     expect(html).toContain("rounded-md");
     expect(html).toContain("px-2");
     expect(html).toContain("py-1.5");
-    expect(html).toContain("]:size-4");
+    expect(html).toContain("]:size-3.5");
     expect(html).toContain("]:shrink-0");
     expect(html).toContain("cursor-pointer");
   });
@@ -66,17 +69,17 @@ describe("sidebar interactive cursors", () => {
   it("applies the shared default treatment to icon-only menu buttons", () => {
     const html = renderToStaticMarkup(
       <SidebarProvider>
-        <SidebarMenuButton size="icon">
+        <Button variant="sidebar" size="icon">
           <span>+</span>
-        </SidebarMenuButton>
+        </Button>
       </SidebarProvider>,
     );
 
-    expect(html).toContain("size-8");
+    expect(html).toContain("size-7.5");
     expect(html).toContain("justify-center");
     expect(html).toContain("p-0");
-    expect(html).toContain("font-medium");
-    expect(html).toContain("text-sidebar-muted-foreground/80");
+    expect(html).toContain("font-normal");
+    expect(html).toContain("text-fg-secondary");
   });
 
   it("lets project drag handles override the default pointer cursor", () => {

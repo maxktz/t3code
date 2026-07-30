@@ -145,7 +145,7 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-fg-secondary: var(--fg-secondary);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
@@ -829,7 +829,7 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
   --primary: oklch(0.488 0.217 264);
   --primary-foreground: var(--color-white);
   --secondary: var(--color-zinc-50);
-  --secondary-foreground: color-mix(in srgb, var(--foreground) 74%, transparent);
+  --fg-secondary: color-mix(in srgb, var(--foreground) 74%, transparent);
   --muted: var(--color-zinc-50);
   --muted-foreground: var(--color-zinc-500);
   --accent: var(--color-zinc-100);
@@ -861,7 +861,8 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
     color-scheme: dark;
     /* Keep the workspace in the same neutral-black family as sidebar v2.
        Surfaces lift from this base instead of starting from a milky gray. */
-    --background: #141414;
+    --background: #0c0c0c;
+    --sidebar: #111111;
     --app-chrome-background: var(--background);
     --surface-raised: var(--secondary);
     --foreground: #f0f0f0;
@@ -887,70 +888,41 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
     --success-foreground: var(--color-emerald-400);
     --warning: var(--color-amber-500);
     --warning-foreground: var(--color-amber-400);
-    --sidebar: #181818;
     --sidebar-foreground: var(--foreground);
     --sidebar-muted-foreground: var(--muted-foreground);
     --sidebar-control-surface: var(--muted);
     --sidebar-row-hover: var(--accent);
     --sidebar-row-active: var(--accent);
     --sidebar-row-selected: var(--muted);
-    --sidebar-border: #292929;
+    --sidebar-border: --alpha(var(--color-white) / 7%);
     --sidebar-stage-fade: var(--sidebar);
   }
 }
 
-/* Keep both navigation implementations on the same quiet zinc hierarchy:
-   zinc-50 navigation, zinc-25 hover, and white selected/raised surfaces.
-   The version attribute remains useful for layout-specific styling without
-   changing the color system when the beta is toggled. */
+/* The version marker owns layout-specific surface application. Theme tokens
+   inherit from :root; the dark block below contains only intentional sidebar
+   palette differences. */
 [data-sidebar-version="v1"],
 [data-sidebar-version="v2"] {
-  --background: var(--color-zinc-25);
-  --foreground: var(--color-zinc-800);
-  --card: var(--color-white);
-  --card-foreground: var(--color-zinc-800);
-  --accent: var(--color-zinc-100);
-  --accent-foreground: var(--color-zinc-900);
-  --muted: var(--color-zinc-50);
-  --muted-foreground: var(--color-zinc-500);
-  --border: var(--color-zinc-200);
-  --input: var(--color-zinc-300);
-  --sidebar: var(--color-zinc-50);
-  --sidebar-foreground: var(--color-zinc-800);
-  --sidebar-muted-foreground: var(--color-zinc-500);
-  --sidebar-control-surface: var(--color-zinc-100);
-  --sidebar-row-hover: var(--color-zinc-25);
-  --sidebar-row-active: var(--color-white);
-  --sidebar-row-selected: var(--color-white);
-  --sidebar-border: var(--color-zinc-200);
-  --sidebar-stage-fade: var(--sidebar);
   background-color: var(--sidebar);
 }
 
 .dark [data-sidebar-version="v1"],
 .dark [data-sidebar-version="v2"] {
   --background: #000;
-  --foreground: #f0f0f0;
-  --card: #000;
+  --card: var(--background);
   --card-foreground: var(--foreground);
   --accent: #191a1d;
   --accent-foreground: #f7f9ff;
   --muted: #0a0a0a;
   --muted-foreground: #a3a3a3;
-  --border: #292929;
+  --border: var(--sidebar-border);
   --input: rgb(255 255 255 / 18%);
-  --sidebar: #181818;
-  --sidebar-foreground: var(--foreground);
   --sidebar-muted-foreground: var(--muted-foreground);
   --sidebar-control-surface: var(--muted);
-  --sidebar-row-hover: color-mix(in srgb, var(--foreground) 8%, transparent);
-  --sidebar-row-active: color-mix(in srgb, var(--foreground) 11%, transparent);
+  --sidebar-row-hover: color-mix(in srgb, var(--foreground) 6%, transparent);
+  --sidebar-row-active: color-mix(in srgb, var(--foreground) 6%, transparent);
   --sidebar-row-selected: color-mix(in srgb, var(--foreground) 7%, transparent);
-  --sidebar-border: #292929;
-  /* The stage-channel header art must ramp to THIS panel's surface, not the
-     global chrome background, or the fade shows a seam (same rule as the
-     light palette above). */
-  --sidebar-stage-fade: var(--sidebar);
 }
 
 body {

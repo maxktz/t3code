@@ -188,8 +188,8 @@ function getWindowTitleBarOptions(
   if (platform === "darwin") {
     return {
       titleBarStyle: "hiddenInset",
-      // Keep the native controls inset ~10px from the top of the 36px chrome.
-      trafficLightPosition: { x: 10, y: 10 },
+      // Keep the native controls inset ~11px from the top of the 36px chrome.
+      trafficLightPosition: { x: 11, y: 11 },
     };
   }
 

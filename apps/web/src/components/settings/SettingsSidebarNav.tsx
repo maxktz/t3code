@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import { useCanGoBack, useNavigate } from "@tanstack/react-router";
 
+import { Button } from "../ui/button";
 import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "../ui/sidebar";
@@ -82,13 +82,14 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
               const isActive = pathname === item.to;
               return (
                 <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton
+                  <Button
+                    variant="sidebar"
                     isActive={isActive}
                     onClick={() => handleSectionClick(item.to)}
                   >
                     <Icon />
                     <span className="truncate">{item.label}</span>
-                  </SidebarMenuButton>
+                  </Button>
                 </SidebarMenuItem>
               );
             })}
@@ -100,10 +101,10 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
         <div className="flex items-center gap-1">
           <SidebarMenu className="min-w-0 flex-1">
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleBackClick}>
+              <Button variant="sidebar" onClick={handleBackClick}>
                 <ArrowLeftIcon />
                 <span>Back</span>
-              </SidebarMenuButton>
+              </Button>
             </SidebarMenuItem>
           </SidebarMenu>
           <T3ConnectSidebarAvatar />

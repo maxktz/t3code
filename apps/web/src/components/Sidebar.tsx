@@ -159,7 +159,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
@@ -2216,7 +2215,8 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
   return (
     <>
       <div className="group/project-header relative">
-        <SidebarMenuButton
+        <Button
+          variant="sidebar"
           ref={isManualProjectSorting ? dragHandleProps?.setActivatorNodeRef : undefined}
           className={`pr-8 group-hover/project-header:bg-sidebar-row-hover group-hover/project-header:text-sidebar-foreground max-sm:pr-14 ${
             isManualProjectSorting ? "cursor-grab active:cursor-grabbing" : ""
@@ -2267,7 +2267,7 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
               </span>
             ) : null}
           </span>
-        </SidebarMenuButton>
+        </Button>
         {/* Environment badge – visible by default, crossfades with the
             "new thread" button on hover using the same pointer-events +
             opacity pattern as the thread row archive/timestamp swap. */}
@@ -2829,7 +2829,8 @@ const SidebarProjectsContent = memo(function SidebarProjectsContent(
             <SidebarMenuItem>
               <CommandDialogTrigger
                 render={
-                  <SidebarMenuButton
+                  <Button
+                    variant="sidebar"
                     className="focus-visible:ring-0"
                     data-testid="command-palette-trigger"
                   />

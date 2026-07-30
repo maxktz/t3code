@@ -39,10 +39,10 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
               onPressedChange={onToggleTerminal}
               aria-label="Toggle terminal drawer"
               variant="ghost"
-              size="sm"
+              size="xs"
               disabled={!terminalAvailable}
             >
-              <PanelBottomIcon className="size-3.5" />
+              <PanelBottomIcon className="size-3.5 text-foreground opacity-[.64]" />
             </Toggle>
           }
         />
@@ -61,10 +61,10 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
               onPressedChange={onToggleRightPanel}
               aria-label="Toggle right panel"
               variant="ghost"
-              size="sm"
+              size="xs"
               disabled={!rightPanelAvailable}
             >
-              <PanelRightIcon className="size-3.5" />
+              <PanelRightIcon className="size-3.5 text-foreground opacity-[.64]" />
             </Toggle>
           }
         />
@@ -96,12 +96,12 @@ export const RightPanelMaximizeControl = memo(function RightPanelMaximizeControl
             onPressedChange={onToggle}
             aria-label={label}
             variant="ghost"
-            size="sm"
+            size="xs"
           >
             {maximized ? (
-              <Minimize2Icon className="size-3.5" />
+              <Minimize2Icon className="size-3.5 text-foreground opacity-[.64]" />
             ) : (
-              <Maximize2Icon className="size-3.5" />
+              <Maximize2Icon className="size-3.5 text-foreground opacity-[.64]" />
             )}
           </Toggle>
         }

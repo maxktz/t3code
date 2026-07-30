@@ -17,7 +17,6 @@ import ProjectScriptsControl, {
 import { OpenInPicker } from "./OpenInPicker";
 import { usePrimaryEnvironmentId } from "../../state/environments";
 import { useT3ProjectFileScripts } from "~/hooks/useT3ProjectFileScripts";
-import { ProjectFavicon } from "../ProjectFavicon";
 import { cn } from "~/lib/utils";
 
 interface ChatHeaderProps {
@@ -36,7 +35,6 @@ interface ChatHeaderProps {
   gitCwd: string | null;
   /** Temporary prototype: hide breadcrumbs + action buttons on the empty new-thread screen. */
   hideChrome?: boolean;
-  onNewThreadInProject: () => void;
   onRunProjectScript: (script: ProjectScript) => void;
   onAddProjectScript: (input: NewProjectScriptInput) => Promise<ProjectScriptActionResult>;
   onUpdateProjectScript: (
@@ -73,7 +71,6 @@ export const ChatHeader = memo(function ChatHeader({
   rightPanelOpen,
   gitCwd,
   hideChrome = false,
-  onNewThreadInProject,
   onRunProjectScript,
   onAddProjectScript,
   onUpdateProjectScript,
@@ -97,43 +94,13 @@ export const ChatHeader = memo(function ChatHeader({
 
   return (
     <div className="@container/header-actions flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden sm:gap-3">
-        {/* The project always leads the header: knowing which project a
-            thread lives in is priority zero, and the thread title alone
-            doesn't answer it. */}
-        {activeProjectName ? (
-          <span className="inline-flex shrink-0 items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    type="button"
-                    aria-label={`New thread in ${activeProjectName}`}
-                    onClick={onNewThreadInProject}
-                    className="inline-flex min-w-0 cursor-pointer items-center gap-1.5 rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-                  />
-                }
-              >
-                <ProjectFavicon
-                  environmentId={activeThreadEnvironmentId}
-                  cwd={activeProjectCwd ?? ""}
-                  className="size-3.5"
-                />
-                <span className="max-w-40 truncate text-sm font-medium">{activeProjectName}</span>
-              </TooltipTrigger>
-              <TooltipPopup side="top">New thread in {activeProjectName}</TooltipPopup>
-            </Tooltip>
-            <span aria-hidden className="text-muted-foreground/40">
-              /
-            </span>
-          </span>
-        ) : null}
+      <div className="flex min-w-0 flex-1 items-center overflow-hidden">
         <Tooltip>
           <TooltipTrigger
             render={
               <h2
                 aria-label={activeThreadTitle}
-                className="min-w-0 flex-1 truncate text-sm font-medium text-foreground"
+                className="min-w-0 flex-1 truncate text-[13px] font-normal text-fg-secondary"
               >
                 {activeThreadTitle}
               </h2>
@@ -145,7 +112,7 @@ export const ChatHeader = memo(function ChatHeader({
       <div
         data-chat-header-actions
         className={cn(
-          "flex shrink-0 items-center justify-end gap-2 @3xl/header-actions:gap-3",
+          "hidden shrink-0 items-center justify-end gap-2 @3xl/header-actions:gap-3",
           rightPanelOpen ? "pr-0" : "pr-16",
         )}
       >

@@ -1,6 +1,5 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "~/lib/utils";
@@ -322,10 +321,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 
   return (
     <Button
-      className={cn(
-        "size-[var(--workspace-titlebar-control-size)]! [-webkit-app-region:no-drag]",
-        className,
-      )}
+      className={cn("[-webkit-app-region:no-drag]", className)}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       aria-pressed={isOpen}
@@ -333,8 +329,8 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
         onClick?.(event);
         toggleSidebar();
       }}
-      size="icon"
-      variant="ghost"
+      size="icon-xs"
+      variant="sidebar"
       {...props}
     >
       <PanelLeftIcon />
@@ -599,12 +595,12 @@ function SidebarRail({
             aria-label={railLabel}
             className={cn(
               /* disable pointer events only when offcanvas sidebar is collapsed, that's when the rail sits over the native scrollbar on windows and linux. icon mode stays fully clickable. */
-              "-translate-x-1/2 group-data-[side=left]:-right-4 absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=right]:left-0 sm:flex [[data-collapsible=offcanvas][data-state=collapsed]_&]:pointer-events-none",
+              "-translate-x-1/2 group-data-[side=left]:-right-1.5 absolute inset-y-0 z-20 hidden w-1.5 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=right]:left-0 sm:flex [[data-collapsible=offcanvas][data-state=collapsed]_&]:pointer-events-none",
               "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
               "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
               "group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:after:left-full",
-              "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
-              "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
+              "[[data-side=left][data-collapsible=offcanvas]_&]:-right-0.75",
+              "[[data-side=right][data-collapsible=offcanvas]_&]:-left-0.75",
               className,
             )}
             data-sidebar="rail"
@@ -791,81 +787,6 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
   );
 }
 
-const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full cursor-pointer items-center gap-2 overflow-hidden text-left outline-hidden ring-ring transition-[width,height,padding] hover:bg-sidebar-row-hover focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pe-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-row-selected data-[active=true]:font-medium data-[active=true]:text-sidebar-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg:not([class*='size-'])]:size-3.5 [&>svg]:shrink-0 [&>svg]:text-foreground [&>svg]:opacity-[.64] data-[active=true]:[&>svg]:text-sidebar-foreground data-[active=true]:[&>svg]:opacity-100",
-  {
-    defaultVariants: {
-      size: "default",
-      variant: "default",
-    },
-    variants: {
-      size: {
-        default: "h-7.5 rounded-md px-2 py-1.5 text-[13px]",
-        icon: "size-7.5 justify-center rounded-md p-0",
-        lg: "h-12 rounded-lg p-2 text-sm group-data-[collapsible=icon]:p-0!",
-        sm: "h-7 rounded-lg p-2 text-xs",
-      },
-      variant: {
-        default: "font-normal text-secondary-foreground",
-        outline: "bg-sidebar-control-surface ring-1 ring-sidebar-border",
-      },
-    },
-  },
-);
-
-function SidebarMenuButton({
-  isActive = false,
-  variant = "default",
-  size = "default",
-  tooltip,
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"button"> & {
-  isActive?: boolean;
-  tooltip?: string | React.ComponentProps<typeof TooltipPopup>;
-} & VariantProps<typeof sidebarMenuButtonVariants>) {
-  const { isMobile, state } = useSidebar();
-
-  const defaultProps = {
-    className: cn(sidebarMenuButtonVariants({ size, variant }), className),
-    "data-active": isActive,
-    "data-sidebar": "menu-button",
-    "data-size": size,
-    "data-slot": "sidebar-menu-button",
-  };
-
-  const buttonProps = mergeProps<"button">(defaultProps, props);
-
-  const buttonElement = useRender({
-    defaultTagName: "button",
-    props: buttonProps,
-    render,
-  });
-
-  if (!tooltip) {
-    return buttonElement;
-  }
-
-  if (typeof tooltip === "string") {
-    tooltip = {
-      children: tooltip,
-    };
-  }
-
-  return (
-    <Tooltip>
-      <TooltipTrigger render={buttonElement as React.ReactElement<Record<string, unknown>>} />
-      <TooltipPopup
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        side="right"
-        {...tooltip}
-      />
-    </Tooltip>
-  );
-}
-
 function SidebarMenuAction({
   className,
   showOnHover = false,
@@ -1022,7 +943,6 @@ export {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,
